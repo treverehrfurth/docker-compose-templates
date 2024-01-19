@@ -1,0 +1,38 @@
+---
+version: "2.1"
+services:
+  kimai:
+    image: lscr.io/linuxserver/kimai:latest
+    container_name: kimai
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - DATABASE_URL=mysql://<MYSQL_USER>:<MYSQL_PASSWORD>!@<local ip addr>:3307/kimai?charset=utf8&serverVersion=10.11.4-MariaDB-log
+      - MAILER_FROM=mail@gmail.com
+      - MAILER_URL=smtps://mail@gmail.com:<app_password>@smtp.gmail.com:465
+    volumes:
+      - /srv/dockerdata/kimai/config:/config
+    ports:
+      - 81:80
+      - 446:443
+    restart: unless-stopped
+
+# This container requires an external application to be run separately.
+# MariaDB
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: mariadb_kimai
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=kimai #optional
+      - MYSQL_USER= #optional
+      - MYSQL_PASSWORD= #optional
+    volumes:
+      - /mysql/config:/config
+    ports:
+      - 3307:3306
+    restart: unless-stopped

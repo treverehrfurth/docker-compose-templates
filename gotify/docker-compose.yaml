@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  gotify:
+    image: gotify/server
+    container_name: gotify
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    ports:
+      - 7400:80
+    environment:
+      - TZ=America/Chicago

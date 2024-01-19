@@ -1,0 +1,72 @@
+services:
+  calibre:
+    image: ghcr.io/linuxserver/calibre
+    container_name: calibre
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /config:/config
+      - /upload:/uploads
+      - /plugins:/plugins
+      - /CalibreLibrary:/Calibre_Library #this is where your ebooks will end up
+      - /CalibreAudiobooks:/Audiobooks
+    ports:
+      - 8080:8080 #change before the ':' if necessary
+      - 8081:8081 #change before the ':' if necessary
+    restart: unless-stopped
+    networks:
+      - ebooks
+
+  calibre-web:
+    image: ghcr.io/linuxserver/calibre-web:nightly
+    container_name: calibre-web
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /calibre-web:/config
+      - /CalibreLibrary:/books
+    restart: unless-stopped
+    depends_on:
+      - calibre
+    ports:
+      - 8083:8083
+    networks:
+      - ebooks
+
+  readarr_books:
+    image: ghcr.io/linuxserver/readarr:nightly
+    container_name: readarr_books
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /readarr_books:/config #change before the ':'
+      - /CalibreLibrary:/books #change before the ':'
+      - /downloads:/downloads  #change before the ':'
+    ports:
+      - 8787:8787
+    restart: unless-stopped
+    networks:
+      - ebooks
+
+  readarr_audiobooks:
+    image: ghcr.io/linuxserver/readarr:nightly
+    container_name: readarr_audiobooks
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /readarr_audiobooks:/config #change before the ':'
+      - /Audiobooks:/books #change before the ':'
+      - /downloads:/downloads  #change before the ':'
+    ports:
+      - 8788:8787
+    restart: unless-stopped
+    networks:
+      - ebooks
+
+networks:
+  ebooks:
+    external: true

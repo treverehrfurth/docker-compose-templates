@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  plex-worker:
+    image: ghcr.io/linuxserver/plex:latest
+    hostname: "plex-worker-{{.Node.Hostname}}"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DOCKER_MODS: "ghcr.io/pabloromeo/clusterplex_worker_dockermod:latest"
+      VERSION: docker
+      PUID: 1000
+      PGID: 1000
+      TZ: America/Chicago
+      LISTENING_PORT: 3501      # used by the healthcheck
+      STAT_CPU_INTERVAL: 2000   # interval for reporting worker load metrics
+      ORCHESTRATOR_URL: http://<local ip addr of orchestrator>:3500
+      EAE_SUPPORT: "1"
+    healthcheck:
+      test: curl -fsS http://localhost:3501/health > /dev/null || exit 1
+      interval: 15s
+      timeout: 15s
+      retries: 5
+      start_period: 240s
+    volumes:
+      - /codecs:/codecs # (optional)
+      - /tv:/tv
+      - /movies:/movies
+      - /transcode:/transcode
+    restart: unless-stopped
