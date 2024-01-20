@@ -11,4 +11,4 @@ services:
       #Notification setup for ntfy
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
       - WATCHTOWER_NOTIFICATION_URL=ntfy://<ntfy.sh site>/watchtower?title=watchtower #make sure in ntfy container you set NTFY_AUTH_DEFAULT_ACCESS to write-only
-    #command: --interval 30
+    #command: --interval 3000
