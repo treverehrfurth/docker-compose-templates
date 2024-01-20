@@ -4,4 +4,8 @@ services:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      #Notification setup for ntfy
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=ntfy://<ntfy.sh site>/watchtower?title=watchtower #make sure in ntfy container you set NTFY_AUTH_DEFAULT_ACCESS to write-only
     #command: --interval 30
